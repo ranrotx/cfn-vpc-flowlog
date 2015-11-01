@@ -4,14 +4,17 @@
   "description": "Enable flow logging on a VPC",
   "main": "index.js",
   "dependencies": {
-  	"aws-sdk": "latest",
-  	"grunt": "0.4.*",
-    "grunt-aws-lambda": "0.8.0",
-    "npm": "^2.8.3"
+  	"aws-sdk": "latest"
   },
+  "devDependencies": {
+     "aws-sdk": "latest",
+     "grunt": "0.4.*",
+     "grunt-aws-lambda": "0.8.0",
+     "npm": "^2.8.3"
+   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Ronnie Eichler",
-  "license": "GNU General Public License, version 2"
+  "license": "Apache 2.0"
 }
