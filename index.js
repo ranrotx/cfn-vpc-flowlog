@@ -3,7 +3,7 @@ var AWS = require('aws-sdk');
 
 exports.handler = function(event, context) {
 
-    var ec2 = new AWS.EC2({region: 'us-east-1'}); //TODO: need to replace
+    var ec2 = new AWS.EC2({region: event.ResourceProperties.Region}); 
 
     var vpcId = event.ResourceProperties.VpcId;
     var FlowLogId = event.ResourceProperties.FlowLogId;
