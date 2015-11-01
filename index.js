@@ -1,13 +1,56 @@
 var AWS = require('aws-sdk');
 
-var ec2 = new AWS.EC2();
 
 exports.handler = function(event, context) {
 
-	console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
+    var ec2 = new AWS.EC2({region: 'us-east-1'}); //TODO: need to replace
 
-	sendResponse(event, context, "SUCCESS");
-    return;
+    var vpcId = event.ResourceProperties.VpcId;
+    var FlowLogId = event.ResourceProperties.FlowLogId;
+    var LogGroupToCreate = event.ResourceProperties.LogGroupName;
+    var Arn = event.ResourceProperties.DeliverLogsPermissionArn;
+
+	
+    if (event.RequestType == "Delete") {
+        var params = {
+          FlowLogIds: [ /* required */
+            FlowLogId
+          ]
+        };
+        ec2.deleteFlowLogs(params, function(err, data) {
+          if (err) {
+            responseData = {Error: "Could not delete flow log"};
+            console.log(responseData.Error + ":\n", err);
+          }
+          else sendResponse(event, context, "SUCCESS");           // successful response
+        });
+     
+    }
+    
+
+    if (event.RequestType == "Create") {
+        var params = {
+          DeliverLogsPermissionArn: Arn, 
+          LogGroupName: LogGroupToCreate, 
+          ResourceIds: [ /* required */
+            vpcId
+            /* more items */
+          ],
+          ResourceType: 'VPC', /* required */
+          TrafficType: 'ALL' /* required */
+        };
+        ec2.createFlowLogs(params, function(err, data) {
+          if (err) {
+            responseData = {Error: "Could not create flow log"};
+            console.log(responseData.Error + ":\n", err);
+          }
+          else     {  // successful response
+            var FlowLogsCreated = data.FlowLogIds;
+            sendResponse(event, context, "SUCCESS", FlowLogCreated);
+          }           
+        });
+    }
+    
 }
 
 function sendResponse(event, context, responseStatus, responseData) {

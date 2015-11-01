@@ -1,15 +1,14 @@
 {
-  "StackId": "arn:aws:cloudformation:us-west-2:EXAMPLE/stack-name/guid",
+  "StackId": "arn:aws:cloudformation:us-east-1:EXAMPLE/stack-name/guid",
   "ResponseURL": "http://pre-signed-S3-url-for-response",
   "ResourceProperties": {
     "StackName": "stack-name",
-    "List": [
-      "1",
-      "2",
-      "3"
-    ]
+    "VpcId": "vpc-id",
+    "FlowLogId": "",
+    "LogGroupName": "test-log-group",
+    "DeliverLogsPermissionArn": "arn-for-testing"
   },
-  "RequestType": "Create",
+  "RequestType": "Delete",
   "ResourceType": "Custom::TestResource",
   "RequestId": "unique id for this create request",
   "LogicalResourceId": "MyTestResource"
