@@ -32,12 +32,11 @@ exports.handler = function(event, context) {
         var params = {
           DeliverLogsPermissionArn: Arn, 
           LogGroupName: LogGroupToCreate, 
-          ResourceIds: [ /* required */
+          ResourceIds: [ 
             vpcId
-            /* more items */
           ],
-          ResourceType: 'VPC', /* required */
-          TrafficType: 'ALL' /* required */
+          ResourceType: 'VPC', 
+          TrafficType: 'ALL' 
         };
         ec2.createFlowLogs(params, function(err, data) {
           if (err) {
