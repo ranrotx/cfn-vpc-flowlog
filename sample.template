@@ -1,0 +1,103 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters": {
+        "LogRetentionTime": {
+            "Type": "Number",
+            "Default": 90,
+            "Description": "Flow log retention time in days",
+            "AllowedValues":  [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]
+        },
+        "CreateVpcFlowLogLambdaFunction": {
+            "Type": "String",
+            "Default": "arn:aws:lambda:us-east-1:000000000000:function:create-vpc-flowlog",
+            "Description": "ARN of the Lamdbda function which will create the flow log. You'll need to change the above to reflect your account and fucntion name."
+        },
+        "CidrBlock": {
+            "Type": "String",
+            "Default": "10.0.0.0/16",
+            "Description": "CIDR block for the VPC to be created"
+        }
+    },
+    "Resources": {
+        "VpcFlowLog": {
+            "Type": "Custom::CreateVpcFlowLogs",
+            "Properties": {
+                "ServiceToken": { "Ref" : "CreateVpcFlowLogLambdaFunction" },
+                "Region": { "Ref": "AWS::Region" },
+                "VpcId": {
+                    "Ref": "Vpc"
+                },
+                "LogGroupName": {
+                    "Ref": "VpcLogGroup"
+                },
+                "DeliverLogsPermissionArn":  {"Fn::GetAtt" : ["FlowLogsRole", "Arn"] }
+            },
+            "DependsOn": []
+        },
+        "FlowLogsRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "vpc-flow-logs.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "root",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogGroup",
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents",
+                                        "logs:DescribeLogGroups",
+                                        "logs:DescribeLogStreams"
+                                    ],
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "VpcLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "RetentionInDays": { "Ref" : "LogRetentionTime" }
+            },
+            "DependsOn": []
+        },
+        "Vpc": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": { "Ref" : "CidrBlock"},
+                "EnableDnsSupport": true,
+                "EnableDnsHostnames": true,
+                "InstanceTenancy": "default"
+            }
+        }
+    },
+    "Outputs": {
+        "VpcFlowLog": {
+            "Description": "Flog log id",
+            "Value": {
+                "Fn::GetAtt": [
+                    "VpcFlowLog",
+                    "Id"
+                ]
+            }
+        }
+    }
+}

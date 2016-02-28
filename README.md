@@ -33,8 +33,13 @@ If this is the case, my best advice is to manually delete the resources manually
 }
 ```
 
-2. Upload the Lambda function `index.js`. Use the IAM role created above for permissions.
+2. Upload the Lambda function `index.js`. Use the IAM role created above for permissions. A 30 second execuation timeout should be fine.
 3. Take note of the ARN of the lambda function.
-4. Use the `sample.template` CloudFormation template and create a VPC with flow logs enabled.
-5. Use the `Gruntfile.sample` to create your own `Gruntfile.js`. Replace the `region`, `000000000000`, and `functionname` in the ARN with values that make sense for you.
+4. Use the `sample.template` CloudFormation template and create a VPC with flow logs enabled. You'll need to specify the ARN of your Lambda function along with other inputs such as the VPC CIDR to create, log retention time etc.
+
+## Other notes
+
+This project was mainly created for demonstration purposes. As such, I can easily see it being modified to make the Lambda function more modular. For example, when I get the time one idea I have is to modify it to take generic inputs so that it can be re-used to enable flow logging on not just an entire VPC but maybe at the subnet and/or ENI level.
+
+
 

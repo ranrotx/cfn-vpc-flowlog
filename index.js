@@ -9,22 +9,13 @@ exports.handler = function(event, context) {
     var FlowLogId = event.ResourceProperties.FlowLogId;
     var LogGroupToCreate = event.ResourceProperties.LogGroupName;
     var Arn = event.ResourceProperties.DeliverLogsPermissionArn;
+    var responseData = {};
 
-	
+    
+     // For Delete requests, immediately send a SUCCESS response (we're not going to delete anything).
     if (event.RequestType == "Delete") {
-        var params = {
-          FlowLogIds: [ /* required */
-            FlowLogId
-          ]
-        };
-        ec2.deleteFlowLogs(params, function(err, data) {
-          if (err) {
-            responseData = {Error: "Could not delete flow log"};
-            console.log(responseData.Error + ":\n", err);
-          }
-          else sendResponse(event, context, "SUCCESS");           // successful response
-        });
-     
+        sendResponse(event, context, "SUCCESS");
+        return;
     }
     
 
@@ -43,9 +34,9 @@ exports.handler = function(event, context) {
             responseData = {Error: "Could not create flow log"};
             console.log(responseData.Error + ":\n", err);
           }
-          else     {  // successful response
-            var FlowLogsCreated = data.FlowLogIds;
-            sendResponse(event, context, "SUCCESS", FlowLogCreated);
+          else     {  
+            responseData["Id"] = data.FlowLogIds[0];
+            sendResponse(event, context, "SUCCESS", responseData);
           }           
         });
     }

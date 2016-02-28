@@ -2,13 +2,13 @@
   "StackId": "arn:aws:cloudformation:us-east-1:EXAMPLE/stack-name/guid",
   "ResponseURL": "http://pre-signed-S3-url-for-response",
   "ResourceProperties": {
-    "StackName": "stack-name",
-    "VpcId": "vpc-id",
-    "FlowLogId": "",
+    "Region": "us-east-1",
+    "StackName": "test",
+    "VpcId": "vpc-00000000",
     "LogGroupName": "test-log-group",
-    "DeliverLogsPermissionArn": "arn-for-testing"
+    "DeliverLogsPermissionArn": "arn:aws:iam::000000000000:role/LambdaCreateFlowLog"
   },
-  "RequestType": "Delete",
+  "RequestType": "Create",
   "ResourceType": "Custom::TestResource",
   "RequestId": "unique id for this create request",
   "LogicalResourceId": "MyTestResource"
